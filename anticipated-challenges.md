@@ -1,17 +1,19 @@
-# Communication Plan 
+# Anticipated Challenges
 
-To make sure we stay on top of our assignments and hit our deadlines, we are going to stick to the following setup: 
+Our team members have diverse skills that we believe will complement and benefit this project. **Jenny** is stronger on research, and **Carlo** is stronger on Python coding. However, we anticipate this course will present some challenges, as meeting the assignment requirements would require something new from us.
 
-* **Weekly Check-ins:** At the start of every week, we will touch base about our availability. We will share when we are planning to work and figure out if there are any "golden hours" where we can both be online at the same time for synchronous work, even with our different schedules. 
-* **Daily Chat and Formal Updates:** For quick, day-to-day questions or technical troubleshooting, we will use Slack. If we have something more formal—like a final project update or an important file to track—we will use Gmail so we have a clear, searchable history of what we decided. 
-* **Shared Drafting:** We will use Google Docs for all our written work. This makes it easy for Jenny to add research notes and for Carlo to drop in technical details in real-time, so we are not constantly emailing different versions of the same document back and forth. 
+## Technical Challenges
 
----
+* **PC Algorithm Implementation:** The core technical hurdle for this project is the successful implementation of the PC algorithm for causal discovery. Because this algorithm involves complex statistical independence tests and graph-edge orientations, getting the logic right will be demanding.
+* **Environmental Consistency:** We anticipate challenges in ensuring our computational environment is consistent. Since we will be using the `causal-learn` library, we need to ensure the code runs identically across machines without "version drift" or dependency conflicts. This aligns with the course’s focus on sustainable and maintainable research code.
 
-# Contingency Plan for Team Member Unavailability
+## Process Challenges
 
-While we will do our best to stay synced through Slack and our weekly schedules, we know that unexpected things happen. If one of us becomes unavailable, especially close to a deadline, we will use the following backup plan: 
+* **Intensive Schedule:** The course structure requires approximately 18 hours of work per week over a 7.5-week period. Our main process challenge will be adhering to the module’s high standards for Sustainable and Maintainable Code while moving at this pace.
+* **Quality vs. Speed:** We expect it to be challenging to consistently apply best practices (quality) while working under such a compressed delivery schedule (speed). Balancing these engineering requirements with the actual algorithmic development will be a major focus of our project management.
 
-* **Shared Access to Work:** We will keep all our project files in a shared GitHub repository and all our write-ups in a shared Google Drive. This way, if one person is offline, the other isn't "locked out" of the latest version of the code or the project plan. 
-* **Documentation as We Go:** To make it easier for one person to step in, we will aim to leave clear comments in our Python code and keep a brief "status note" in our shared docs. This helps the remaining team member understand what’s finished and what still needs work. 
-* **Prioritizing the Essentials:** If we find ourselves near a submission date, the remaining member will focus on completing the "Minimum Viable Product"—the core requirements needed to submit a working assignment—and might have to scale back on any extra "nice-to-have" features.
+## Teamwork Challenges
+
+* **Work Integration:** While our team has a good mix of research and coding skills, we anticipate challenges in how we actually integrate our work. 
+* **Bottleneck Management:** Because we have different schedules, we need to manage the project so that "bottlenecks" do not occur. We expect to face difficulties designing the software so we can work on different modules (e.g., research-heavy data prep versus the core Python implementation) simultaneously without breaking the main codebase. 
+* **Git Learning Curve:** Mastering the use of Version Control (Git/GitHub) to handle these merges smoothly will be a significant learning curve for the team.
