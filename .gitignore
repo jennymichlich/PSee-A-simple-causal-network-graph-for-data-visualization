@@ -1,0 +1,25 @@
+# Python compiled
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Anaconda / Environments
+env/
+venv/
+ENV/
+.conda/
+psee_env/
+
+# Data (Keep folder, ignore files)
+data/*
+!data/.gitkeep
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# IDE / OS
+.DS_Store
+.vscode/
+.idea/
