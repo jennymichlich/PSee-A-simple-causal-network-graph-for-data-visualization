@@ -3,14 +3,12 @@ import os
 
 def load_tuebingen_pair(folder_path, file_name):
     """
-    Grabs one of those specific pair files from the Tuebingen folder.
+    Loads a specific variable pair file from the Tuebingen dataset directory.
     
-    This handles Issue #2. We are focused on just getting a two-variable 
-    system loaded up so the algorithm has something to chew on.
+    Returns:
+        pd.DataFrame: A two-column DataFrame ('A', 'B') containing the 
+                      variable pair, or None if the file is missing.
     """
-    # TODO: Find the specific text file in the folder
-    # TODO: Load the two columns of data (Variable A and Variable B)
-    # TODO: Return the data table
 
     full_path = os.path.join(folder_path, file_name)
 
