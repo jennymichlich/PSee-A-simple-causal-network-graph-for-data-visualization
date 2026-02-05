@@ -8,32 +8,37 @@ import pandas as pd
 
 from pgmpy.estimators import PC
 
-def run_pc_algo_library(data):
+def run_pc_algo_library(data, alpha=0.05, test_name='pearsonr'):
     """
-    Addresses Issue #1 & #4 using the pgmpy library.
+    Runs the PC algorithm.
     
+    Args:
+        data (pd.DataFrame): The data.
+        alpha (float): Significance level (default 0.05).
+        test_name (str): The statistical test to use. 
+                         Options: 'pearsonr', 'fisher-z', 'chi_square', 'g_sq'.
+                         Default is 'pearsonr' (best for continuous data).
     """
     try:
-        print("Running PC Algorithm (Library Implementation)...")
-        
-        # Initialize the estimator
+        print("Running PC Algorithm...")
         est = PC(data)
+        model = est.estimate(return_type='dag', significance_level=alpha, ci_test=test_name)
+        dag = nx.DiGraph(model)
+        return dag
         
-        # Run the algorithm
-        # significance_level=0.05 means we are 95% confident in the results
-        model = est.estimate(return_type='dag', significance_level=0.05)
-        
-        # Convert to a standard NetworkX graph to return
-        return nx.DiGraph(model)
-        
-    except ImportError:
-        print("Error: You need to install pgmpy to use this function!")
-        print("Run: pip install pgmpy")
-        return None
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
 
+def get_adjacency_matrix(dag):
+    """
+    Extracts the adjacency matrix from the Graph (dag) object.
+    """
+    if dag is None:
+        return None
+    else:
+        matrix = nx.to_pandas_adjacency(dag)
+        return matrix
 
 # ==========================================
 # OPTION B: The Manual Way (From Scratch)
@@ -48,7 +53,7 @@ def check_independence(data, var_a, var_b):
     # TODO: Calculate the correlation between A and B
     # TODO: Run Fisher's Z-test (or a simple T-test for now)
     # TODO: Return True if the p-value is high (independent), False if low (related)
-    pass
+    return None
 
 def orient_edges(skeleton):
     """
