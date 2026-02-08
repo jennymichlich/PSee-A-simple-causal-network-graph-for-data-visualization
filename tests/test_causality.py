@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 # We'll need to import our actual functions once they are written
 from src.loaders import load_tuebingen_pair
-from src.causality import run_pc_algorithm
+from src.causality import run_pc_algo_library as run_pc_algorithm
 
 def test_pc_finds_connection():
     """
@@ -56,4 +56,5 @@ def test_adjacency_matrix_format():
     # TODO: Convert result to matrix
     # TODO: Assert shape is (2, 2)
     pass
+
 
