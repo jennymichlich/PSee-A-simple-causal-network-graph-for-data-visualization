@@ -22,7 +22,9 @@ def run_pc_algo_library(data, alpha=0.05, test_name='pearsonr'):
     try:
         print("Running PC Algorithm...")
         est = PC(data)
-        model = est.estimate(return_type='dag', significance_level=alpha, ci_test=test_name)
+        model = est.estimate(return_type='dag', 
+                             significance_level=alpha, 
+                             ci_test=test_name)
         dag = nx.DiGraph(model)
         return dag
         
@@ -36,9 +38,12 @@ def get_adjacency_matrix(dag):
     """
     if dag is None:
         return None
-    else:
-        matrix = nx.to_pandas_adjacency(dag)
-        return matrix
+        
+    nodes = sorted(list(dag.nodes()))
+    adj_matrix = nx.to_numpy_array(dag, nodelist=nodes)
+    df_matrix = pd.DataFrame(adj_matrix, index=nodes, columns=nodes)
+    
+    return df_matrix.fillna(0.0)
 
 # ==========================================
 # OPTION B: The Manual Way (From Scratch)
