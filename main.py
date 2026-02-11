@@ -11,18 +11,18 @@ def main():
 
     print("In main.")
     parser = argparse.ArgumentParser(description="Run PC Algorithm on Tuebingen Data")
-    # parser.add_argument('--pair', type=str, default='pair0001.txt', 
-    #                     help="The name of the file to analyze (e.g., pair0001.txt)")
-    parser.add_argument('--pair', type=str, default='pair0060.txt', 
-                        help="The name of the file to analyze (e.g., pair0060.txt)")
+    parser.add_argument('--pair', type=str, default='pair0001.txt', 
+                        help="The name of the file to analyze (e.g., pair0001.txt)")
+    # parser.add_argument('--pair', type=str, default='pair0060.txt', 
+    #                     help="The name of the file to analyze (e.g., pair0060.txt)")
     # parser.add_argument('--pair', type=str, default='pair0079.txt', 
     #                     help="The name of the file to analyze (e.g., pair0079.txt)")
     # parser.add_argument('--pair', type=str, default='pair0096.txt', 
     #                     help="The name of the file to analyze (e.g., pair0096.txt)")
-    # parser.add_argument('--alpha', type=float, default=0.05, 
-    #                     help="Significance level for independence tests")
-    parser.add_argument('--alpha', type=float, default=0.2, 
+    parser.add_argument('--alpha', type=float, default=0.05, 
                         help="Significance level for independence tests")
+    # parser.add_argument('--alpha', type=float, default=0.2, 
+    #                     help="Significance level for independence tests")
     parser.add_argument('--output', type=str, default='output_graph.png',
                         help="Filename to save the resulting graph")
     parser.add_argument('--test', type=str, default='pearsonr', 
