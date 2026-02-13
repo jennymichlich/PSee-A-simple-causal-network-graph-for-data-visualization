@@ -7,8 +7,9 @@ dependencies:
   - pandas
   - networkx
   - matplotlib
-  - pytest
   - scipy
+  - scikit-learn
   - pip
   - pip:
     - pgmpy
+    - causal-learn

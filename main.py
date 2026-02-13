@@ -2,10 +2,11 @@ import argparse
 import os
 import matplotlib.pyplot as plt
 from src.loaders import load_tuebingen_pair
-from src.causality import run_pc_algo_library
-from src.causality import get_adjacency_matrix
+from src.causality import run_pc_algo_library, get_adjacency_matrix, check_causal_direction_anm
 from src.graphs import draw_causal_graph
 import networkx as nx
+
+
 
 def main():
 
@@ -34,6 +35,14 @@ def main():
         print("Stopping: Could not load data.")
         return
     else:
+        print("df :")
+        print(df.head())
+
+        direction, p_forward, p_backward = check_causal_direction_anm(df=df, alpha=0.05)
+        print("direction :", direction)
+        print("p_forward :", p_forward)
+        print("p_backward :", p_backward)
+
         print("\nCorrelation Matrix:")
         print(df.corr()) 
         print("-------------------\n")

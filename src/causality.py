@@ -1,6 +1,11 @@
 import networkx as nx
 import numpy as np
 import pandas as pd
+from causallearn.search.FCMBased.ANM.ANM import ANM
+import warnings
+# from sklearn.exceptions import ConvergenceWarning
+# warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
 
 # ==========================================
 # OPTION A: The Library Way (pgmpy)
@@ -32,18 +37,57 @@ def run_pc_algo_library(data, alpha=0.05, test_name='pearsonr'):
         print(f"An error occurred: {e}")
         return None
 
+
 def get_adjacency_matrix(dag):
     """
-    Extracts the adjacency matrix from the Graph (dag) object.
+    Converts a pgmpy / networkx DAG into a clean 2x2 adjacency matrix.
+    Ensures a valid DataFrame is returned even if dag is None (testing revealed this error).
     """
-    if dag is None:
-        return None
-        
-    nodes = sorted(list(dag.nodes()))
-    adj_matrix = nx.to_numpy_array(dag, nodelist=nodes)
-    df_matrix = pd.DataFrame(adj_matrix, index=nodes, columns=nodes)
+    # Create the default template
+    matrix = pd.DataFrame(0, index=['A', 'B'], columns=['A', 'B'])
     
-    return df_matrix.fillna(0.0)
+    # If dag is None or empty, we just return the zeros
+    if dag is None:
+        return matrix
+        
+    # Check for edges (if the nodes exist in the graph)
+    if 'A' in dag.nodes and 'B' in dag.nodes:
+        if dag.has_edge('A', 'B'):
+            matrix.loc['A', 'B'] = 1
+        if dag.has_edge('B', 'A'):
+            matrix.loc['B', 'A'] = 1
+            
+    return matrix
+
+
+def check_causal_direction_anm(df, alpha=0.05):
+    """
+    Determines the causal direction between two variables (A, B) using
+    Additive Noise Models (ANM).
+    """
+    
+    data_a = df['A'].to_numpy().reshape(-1, 1)
+    data_b = df['B'].to_numpy().reshape(-1, 1)
+
+    anm = ANM()
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore") 
+        p_forward, p_backward = anm.cause_or_effect(data_a, data_b)
+
+    direction = "Inconclusive"
+    
+    if p_forward > alpha and p_backward < alpha:
+        direction = "A --> B"    
+    elif p_backward > alpha and p_forward < alpha:
+        direction = "B --> A"     
+    elif p_forward > p_backward:
+        direction = "A --> B (Weak)"
+    elif p_backward > p_forward:
+        direction = "B --> A (Weak)"
+
+    return direction, p_forward, p_backward
+
 
 # ==========================================
 # OPTION B: The Manual Way (From Scratch)
