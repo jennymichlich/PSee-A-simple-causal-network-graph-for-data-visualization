@@ -29,7 +29,8 @@ def run_pc_algo_library(data, alpha=0.05, test_name='pearsonr'):
         est = PC(data)
         model = est.estimate(return_type='dag', 
                              significance_level=alpha, 
-                             ci_test=test_name)
+                             ci_test=test_name,
+                             show_progress=False)
         dag = nx.DiGraph(model)
         return dag
         
