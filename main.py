@@ -7,7 +7,6 @@ from src.graphs import draw_causal_graph
 import networkx as nx
 
 
-
 def main():
 
     print("In main.")

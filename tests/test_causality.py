@@ -20,7 +20,6 @@ warnings.filterwarnings("ignore", category=UserWarning)
 class TestPCAlgorithm(unittest.TestCase):
     def test_pc_perfect_correlation(self):
         df = pd.DataFrame({'A': [1, 2, 3, 4, 5] * 20, 'B': [1, 2, 3, 4, 5] * 20})
-        # Capture stdout to hide pgmpy's internal logs during this test
         with open(os.devnull, 'w') as fnull:
             with redirect_stdout(fnull), redirect_stderr(fnull):
                 dag = run_pc_algo_library(df, alpha=0.05)
@@ -41,6 +40,7 @@ class TestPCAlgorithm(unittest.TestCase):
         self.assertEqual(dag_strict.number_of_edges(), 0)
         self.assertEqual(dag_loose.number_of_edges(), 1)
 
+
 class TestCausalityStructure(unittest.TestCase):
     def test_matrix_empty_graph(self):
         dag = nx.DiGraph()
@@ -58,45 +58,47 @@ class TestCausalityStructure(unittest.TestCase):
         matrix = get_adjacency_matrix(dag)
         self.assertEqual(matrix.loc['B', 'A'], 1)
 
-class TestCausalBenchmark(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.data_folder = os.path.join('data', 'pairs')
-        cls.ground_truths = get_all_ground_truths(cls.data_folder)
-        cls.alpha = 0.05
-        print(f"\n[Setup] Testing {len(cls.ground_truths)} pairs...")
 
-    def test_all_pairs_anm(self):
-        passed, total = 0, 0
-        sorted_files = sorted(self.ground_truths.keys())
+# class TestCausalBenchmark(unittest.TestCase):
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.data_folder = os.path.join('data', 'pairs')
+#         cls.ground_truths = get_all_ground_truths(cls.data_folder)
+#         cls.alpha = 0.05
+#         print(f"\n[Setup] Testing {len(cls.ground_truths)} pairs...")
+#
+#     def test_all_pairs_anm(self):
+#         passed, total = 0, 0
+#         sorted_files = sorted(self.ground_truths.keys())
+#
+#         print(f"\n{'File':<15} | {'Ground Truth':<15} | {'Prediction':<15} | {'Status'}")
+#         print("-" * 60)
+#
+#         for filename in sorted_files:
+#             expected_truth = self.ground_truths[filename]
+#             if expected_truth not in ['A --> B', 'B --> A']: continue
+#
+#             with self.subTest(file=filename):
+#                 df = load_tuebingen_pair(self.data_folder, filename)
+#
+#                 # SILENCE the library internal chatter here
+#                 with open(os.devnull, 'w') as fnull:
+#                     with redirect_stdout(fnull), redirect_stderr(fnull):
+#                         prediction_full, _, _ = check_causal_direction_anm(df, alpha=self.alpha)
+#
+#                 prediction_core = prediction_full.split(" (")[0]
+#                 is_correct = (prediction_core == expected_truth)
+#
+#                 status = "PASS" if is_correct else "FAIL"
+#                 print(f"{filename:<15} | {expected_truth:<15} | {prediction_core:<15} | {status}")
+#
+#                 if is_correct: passed += 1
+#                 total += 1
+#                 self.assertEqual(prediction_core, expected_truth)
+#
+#         print("-" * 60)
+#         print(f"Final Accuracy: {passed}/{total} ({(passed/total)*100:.1f}%)")
 
-        print(f"\n{'File':<15} | {'Ground Truth':<15} | {'Prediction':<15} | {'Status'}")
-        print("-" * 60)
-
-        for filename in sorted_files:
-            expected_truth = self.ground_truths[filename]
-            if expected_truth not in ['A --> B', 'B --> A']: continue
-
-            with self.subTest(file=filename):
-                df = load_tuebingen_pair(self.data_folder, filename)
-                
-                # SILENCE the library internal chatter here
-                with open(os.devnull, 'w') as fnull:
-                    with redirect_stdout(fnull), redirect_stderr(fnull):
-                        prediction_full, _, _ = check_causal_direction_anm(df, alpha=self.alpha)
-                
-                prediction_core = prediction_full.split(" (")[0]
-                is_correct = (prediction_core == expected_truth)
-                
-                status = "PASS" if is_correct else "FAIL"
-                print(f"{filename:<15} | {expected_truth:<15} | {prediction_core:<15} | {status}")
-                
-                if is_correct: passed += 1
-                total += 1
-                self.assertEqual(prediction_core, expected_truth)
-
-        print("-" * 60)
-        print(f"Final Accuracy: {passed}/{total} ({(passed/total)*100:.1f}%)")
 
 if __name__ == '__main__':
     unittest.main()

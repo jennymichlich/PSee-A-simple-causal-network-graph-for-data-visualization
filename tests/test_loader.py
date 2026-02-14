@@ -12,7 +12,9 @@ from src.loaders import load_tuebingen_pair
 class TestTuebingenLoader(unittest.TestCase):
 
     def setUp(self):
-        self.data_folder = os.path.join('data', 'pairs')
+        current_test_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(current_test_dir)
+        self.data_folder = os.path.join(project_root, 'data', 'pairs')
 
     # Individaul data file tests
     def test_dimensions_are_correct(self):
@@ -70,25 +72,40 @@ class TestTuebingenLoader(unittest.TestCase):
     # Group data file tests
     def test_load_all_valid_tuebingen_pairs(self):
         """
-        Test all Tuebingen pair files in folder
+        Test all Tuebingen pair files and report only the failures.
         """
         search_path = os.path.join(self.data_folder, 'pair*.txt')
         all_files = glob.glob(search_path)
-        
         data_files = [f for f in all_files if '_des.txt' not in f]
-        
-        print(f"\n[Test Info] Found {len(data_files)} data files to test.")
+
+        failed_files = []
+
         for file_path in data_files:
             filename = os.path.basename(file_path)
-            
-            with self.subTest(file=filename):
-            
+
+            try:
                 df = load_tuebingen_pair(self.data_folder, filename)
-                
-                self.assertIsInstance(df, pd.DataFrame, f"Failed to load {filename}.")
-                self.assertFalse(df.empty, f"File {filename} is empty.")
-                self.assertGreaterEqual(df.shape[1], 2, f"File {filename} has < 2 columns.")
+
+                # Validation Logic
+                if df is None:
+                    failed_files.append(f"{filename} (Returned None)")
+                elif df.empty:
+                    failed_files.append(f"{filename} (Empty DataFrame)")
+                elif df.shape[1] < 2:
+                    failed_files.append(f"{filename} (Less than 2 columns)")
+
+            except Exception as e:
+                failed_files.append(f"{filename} (Raised Exception: {str(e)})")
+
+        if failed_files:
+            print(f"\n\n{'!' * 20} LOADING FAILURES {'!' * 20}")
+            for failure in failed_files:
+                print(f"  - {failure}")
+            print(f"{'!' * 58}\n")
+
+        self.assertEqual(len(failed_files), 0, f"Failed to load {len(failed_files)} files out of {len(data_files)}.")
 
 
 if __name__ == '__main__':
     unittest.main()
+
