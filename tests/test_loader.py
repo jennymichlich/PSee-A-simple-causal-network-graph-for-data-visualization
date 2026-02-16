@@ -31,8 +31,13 @@ class TestTuebingenLoader(unittest.TestCase):
 
     def test_data_has_variance(self):
         # Load single data file
+        filename = 'pair0001.txt'
+        df = load_tuebingen_pair(self.data_folder, filename)
         # Calculate standard deviation for each column
+        for col in df.columns:
+            std_devs = df[col].astype(float).std()
         # Assert that standard deviation > 0 else emit error message
+        self.assertGreater(std_devs, 0, f"Expected 0 standard deviation, got {std_devs}")
         return
 
     def test_data_is_numeric(self):
@@ -113,5 +118,6 @@ class TestTuebingenLoader(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
 
 
