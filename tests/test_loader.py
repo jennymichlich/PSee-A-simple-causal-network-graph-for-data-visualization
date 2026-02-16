@@ -42,8 +42,13 @@ class TestTuebingenLoader(unittest.TestCase):
 
     def test_data_is_numeric(self):
         # Load single data file
+        filename = 'pair0001.txt'
+        df = load_tuebingen_pair(self.data_folder, filename)
         # for each column check if data is numeric
+        for col in df.columns:
         # Assert that the seach column is numeric else emit error message
+            self.assertTrue(pd.api.types.is_numeric_dtype(df[col]),
+                        f"Column '{col}' is not numeric. Type: {df[col].dtype}")
         return
 
     def test_load_tuebingen_pair_valid(self):
@@ -118,6 +123,7 @@ class TestTuebingenLoader(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
 
 
 
