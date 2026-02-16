@@ -19,9 +19,14 @@ class TestTuebingenLoader(unittest.TestCase):
     # Individaul data file tests
     def test_dimensions_are_correct(self):
         # Load single data file
+        filename = 'pair0001.txt'
+        df = load_tuebingen_pair(self.data_folder, filename)
         # Access data file shape
+        rows, cols = df.shape
         # Assert that number of columns (from shape) is 2 otherwise emmit error message
+        self.assertEqual(cols,2,  f"Expected 2 columns, got {cols}")
         # Assert that number of rows (from shape) is greater than 0 otherwise emit error
+        self.assertGreater(rows,0, f"Expected 0 rows, got {rows}")
         return
 
     def test_data_has_variance(self):
@@ -108,4 +113,5 @@ class TestTuebingenLoader(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
 
