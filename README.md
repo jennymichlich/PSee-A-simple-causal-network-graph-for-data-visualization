@@ -18,16 +18,18 @@ To set up the PSee project environment, we recommend using **Conda**. This ensur
    ```bash
    git clone [https://github.com/jennymichlich/PSee-A-simple-causal-network-graph-for-data-visualization.git](https://github.com/jennymichlich/PSee-A-simple-causal-network-graph-for-data-visualization.git)
    cd PSee-A-simple-causal-network-graph-for-data-visualization
+    ```
 
 2. **Create the Conda environment:**
     This command uses the provided environment.yml file to install Python 3.10 and all necessary dependencies.
     ```bash
     conda env create -f environment.yml
+    ```
 
 3. **Activate the environment:**
     ```bash
     conda activate psee_env
-
+    ```
 
 ## 4. User Documentation
 PSee is executed via the command line using `main.py`. The program loads data, performs causal discovery using Additive Noise Models (ANM) and the PC Algorithm, and visualizes the resulting network.
@@ -36,6 +38,7 @@ PSee is executed via the command line using `main.py`. The program loads data, p
 To analyze the default data pair:
 ```bash
 python main.py
+```
 
 ### Command-Line Arguments
 The following flags allow you to customize the analysis based on the parameters defined in `main.py`:
