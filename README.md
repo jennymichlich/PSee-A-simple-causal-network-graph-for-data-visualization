@@ -12,7 +12,7 @@ Correlations are often undirected and unstable, leading to findings that fail to
 
 ## 3. Installation
 
-To set up the PSee project environment, we recommend using **Conda**. [cite_start]This ensures all specialized causal inference libraries, such as `pgmpy` and `causal-learn`, are installed correctly.
+To set up the PSee project environment, we recommend using **Conda**. This ensures all specialized causal inference libraries, such as `pgmpy` and `causal-learn`, are installed correctly.
 
 1. **Clone the repository:**
    ```bash
@@ -34,8 +34,8 @@ PSee is executed via the command line using `main.py`. The program loads data, p
 
 ### Basic Usage
 To analyze the default data pair:
-    ```bash
-    python main.py
+```bash
+python main.py
 
 ### Command-Line Arguments
 The following flags allow you to customize the analysis based on the parameters defined in `main.py`:
