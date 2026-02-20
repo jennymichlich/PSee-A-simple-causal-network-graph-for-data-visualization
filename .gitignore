@@ -23,3 +23,8 @@ data/*
 .DS_Store
 .vscode/
 .idea/
+
+# Saved charts
+results/
+reports/
+*.png

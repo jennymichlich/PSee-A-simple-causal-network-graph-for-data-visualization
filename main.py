@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 from src.loaders import load_tuebingen_pair
 from src.causality import run_pc_algo_library, get_adjacency_matrix, check_causal_direction_anm
-from src.graphs import draw_causal_graph
+from src.graphs import draw_causal_graph, save_graph_to_file
 import networkx as nx
 
 
@@ -15,7 +15,7 @@ def main():
                         help="The name of the file to analyze (e.g., pair0001.txt)")
     parser.add_argument('--alpha', type=float, default=0.05, 
                         help="Significance level for independence tests")
-    parser.add_argument('--output', type=str, default='output_graph.png',
+    parser.add_argument('--output', type=str, default=os.path.join('results', 'output_graph.png'),
                         help="Filename to save the resulting graph")
     parser.add_argument('--test', type=str, default='pearsonr', 
                         help="Statistical test: pearsonr, fisher-z, or chi_square")
@@ -60,30 +60,45 @@ def main():
 
         if dag is not None:
 
-            undirected_graph = dag.to_undirected()
+            # Explicitly incorporate Additive Noise Models information about relationship direction.
+            if direction == "A --> B":
+                if dag.has_edge('B', 'A'): dag.remove_edge('B', 'A')
+                dag.add_edge('A', 'B')
+            elif direction == "B --> A":
+                if dag.has_edge('A', 'B'): dag.remove_edge('A', 'B')
+                dag.add_edge('B', 'A')
 
-            print("\nPlotting graph...")
+            print("\nGenerating Visualization...")
+
+            draw_causal_graph(dag, 
+                              title=f"Causal Analysis: {args.pair}", 
+                              save_path=args.output)
+
+            #-----------------------------------------------------------------------    
+            # undirected_graph = dag.to_undirected()
+
+            # print("\nPlotting graph...")
             
-            pos = nx.circular_layout(dag)
+            # pos = nx.circular_layout(dag)
             
-            print(f"Node Positions: {pos}")
+            # print(f"Node Positions: {pos}")
             
-            plt.figure(figsize=(8, 6)) 
-            plt.title(f"Causal Graph for {args.pair} (alpha={args.alpha})")
-            nx.draw(undirected_graph, pos, 
-                    with_labels=True, 
-                    node_color='lightblue', 
-                    node_size=2000,    
-                    # arrowsize=20, 
-                    font_size=12, 
-                    font_weight='bold',
-                    connectionstyle='arc3, rad=0.1') 
+            # plt.figure(figsize=(8, 6)) 
+            # plt.title(f"Causal Graph for {args.pair} (alpha={args.alpha})")
+            # nx.draw(undirected_graph, pos, 
+            #         with_labels=True, 
+            #         node_color='lightblue', 
+            #         node_size=2000,    
+            #         # arrowsize=20, 
+            #         font_size=12, 
+            #         font_weight='bold',
+            #         connectionstyle='arc3, rad=0.1') 
             
-            # plt.savefig(args.output)
-            # print(f"Graph saved to {args.output}")
+            # # plt.savefig(args.output)
+            # # print(f"Graph saved to {args.output}")
             
-            plt.show()
-            
+            # plt.show()
+            #-----------------------------------------------------------------------    
         else:
             print("No graph returned (PC Algorithm failed).")
 
