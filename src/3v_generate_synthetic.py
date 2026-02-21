@@ -3,11 +3,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
 
+## The three main structures used in this dataset are forks, colliders, and chains.
 
 class CausalModel:
     def __init__(self, n_samples=1000):
         self.n = n_samples
 
+    ## In the fork structure, the initial causal agent Z moves to X and Y, where
+    ## noise is added to correlate X and Y. This is also demonstrated in the final plots.
+    
     def generate_fork(self):
         """Fork structure: X <- Z -> Y"""
         Z = np.random.randn(self.n)
@@ -15,6 +19,9 @@ class CausalModel:
         Y = -1.5 * Z + np.random.randn(self.n) * 0.5
         return {'X': X, 'Y': Y, 'Z': Z}
 
+    ## In the collider structure, the initial causal agents X and Y move to influence Z, where
+    ## noise is added to correlate X and Y. This is also demonstrated in the final plots.
+    
     def generate_collider(self):
         """Collider structure: X -> Z <- Y"""
         X = np.random.randn(self.n)
@@ -22,6 +29,9 @@ class CausalModel:
         Z = 1.5 * X + 2 * Y + np.random.randn(self.n) * 0.5
         return {'X': X, 'Y': Y, 'Z': Z}
 
+    ## In the chain structure, the initial causal agent X influences Z and Y in a chain, where
+    ## noise is added to correlate Z and Y. This is also demonstrated in the final plots.
+    
     def generate_chain(self):
         """Chain structure: X -> Z -> Y"""
         X = np.random.randn(self.n)
@@ -47,6 +57,8 @@ print("=== FORK STRUCTURE (X <- Z -> Y) ===")
 print(f"Cor(X,Y): {pearsonr(df_fork['X'], df_fork['Y'])[0]:.3f} (should be correlated)")
 # Conditional independence test (residuals after regressing out Z)
 from sklearn.linear_model import LinearRegression
+
+## The linear regressions check the correlation of the desired variables.
 
 lr = LinearRegression()
 lr.fit(df_fork[['Z']], df_fork['X'])
