@@ -4,10 +4,14 @@ import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
 from sklearn.linear_model import LinearRegression
 
+## These causal models represent an introduction to a hierarchical system, as multiple causal variables interact in more complex ways. 
 
 class CausalModel:
     def __init__(self, n_samples=1000):
         self.n = n_samples
+
+    ## In the fork structure, the initial causal agent W moves to X and Y, and a separate fork
+    ## moves to Z, where noise is added to correlate X, Y, and Z. This is also demonstrated in the final plots.
 
     def generate_fork(self):
         """Fork structure: X <- W -> Y and W -> Z with added noise as coefficient"""
@@ -17,14 +21,20 @@ class CausalModel:
         Z = 1.2 * W + np.random.randn(self.n) * 0.5
         return {'W': W, 'X': X, 'Y': Y, 'Z': Z}
 
+    ## In the collider structure, the initial causal agents X and Y move to W, and a separate fork from W
+    ## moves to Z, where noise is added to correlate X, Y, and Z. This is also demonstrated in the final plots.
+    
     def generate_collider(self):
-        """Collider structure: X -> W <- Y and W -> Z with added noise as coefficient"""
+        """Collider structure: X -> W <- Y and W -> Z with added noise as a coefficient"""
         X = np.random.randn(self.n)
         Y = np.random.randn(self.n)
         W = 1.5 * X + 2 * Y + np.random.randn(self.n) * 0.5
         Z = 1.3 * W + np.random.randn(self.n) * 0.5
         return {'W': W, 'X': X, 'Y': Y, 'Z': Z}
 
+    ## In the chain structure, the initial causal agents X move to W, Y, and then Z in a chain, 
+    ## where noise is added to correlate X, Y, and Z. This is also demonstrated in the final plots.
+    
     def generate_chain(self):
         """Chain structure: X -> W -> Y -> Z with added noise as a coefficient """
         X = np.random.randn(self.n)
