@@ -10,7 +10,7 @@ class CausalModel:
         self.n = n_samples
 
     def generate_fork(self):
-        """Fork structure: X <- W -> Y and W -> Z"""
+        """Fork structure: X <- W -> Y and W -> Z with added noise as coefficient"""
         W = np.random.randn(self.n)
         X = 2 * W + np.random.randn(self.n) * 0.5
         Y = -1.5 * W + np.random.randn(self.n) * 0.5
@@ -18,7 +18,7 @@ class CausalModel:
         return {'W': W, 'X': X, 'Y': Y, 'Z': Z}
 
     def generate_collider(self):
-        """Collider structure: X -> W <- Y and W -> Z"""
+        """Collider structure: X -> W <- Y and W -> Z with added noise as coefficient"""
         X = np.random.randn(self.n)
         Y = np.random.randn(self.n)
         W = 1.5 * X + 2 * Y + np.random.randn(self.n) * 0.5
@@ -26,7 +26,7 @@ class CausalModel:
         return {'W': W, 'X': X, 'Y': Y, 'Z': Z}
 
     def generate_chain(self):
-        """Chain structure: X -> W -> Y -> Z"""
+        """Chain structure: X -> W -> Y -> Z with added noise as a coefficient """
         X = np.random.randn(self.n)
         W = 1.5 * X + np.random.randn(self.n) * 0.5
         Y = 2 * W + np.random.randn(self.n) * 0.5
