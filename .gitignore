@@ -11,10 +11,6 @@ ENV/
 .conda/
 psee_env/
 
-# Data (Keep folder, ignore files)
-data/*
-!data/.gitkeep
-
 # Jupyter checkpoints
 .ipynb_checkpoints/
 */.ipynb_checkpoints/
@@ -24,7 +20,12 @@ data/*
 .vscode/
 .idea/
 
-# Saved charts
-results/
+# Saved charts and outputs
+# Ignore everything inside results/ EXCEPT the .gitkeep file
+results/*
+!results/.gitkeep
 reports/
+
+# Ignore loose PNGs
 *.png
+!docs/*.png

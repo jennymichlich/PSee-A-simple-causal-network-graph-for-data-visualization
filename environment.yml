@@ -9,6 +9,7 @@ dependencies:
   - matplotlib
   - scipy
   - scikit-learn
+  - pytest
   - pip
   - pip:
     - pgmpy

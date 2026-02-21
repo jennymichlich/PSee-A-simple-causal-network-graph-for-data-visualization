@@ -32,24 +32,37 @@ To set up the PSee project environment, we recommend using **Conda**. This ensur
     ```
 
 ## 4. User Documentation
-PSee is executed via the command line using `main.py`. The program loads data, performs causal discovery using Additive Noise Models (ANM) and the PC Algorithm, and visualizes the resulting network.
+PSee is executed via the command line using `main.py`. The program features a **Hybrid Discovery Pipeline** that loads data, performs causal structure discovery using the PC Algorithm, and then refines and orients the network edges (resolving Markov Equivalence Classes, such as Forks vs. Chains) using Additive Noise Models (ANM).
+
+### Smart Defaults & Data Folders
+The tool automatically maps your analysis to the correct directory based on the complexity of the system:
+* **2-variable systems** pull from `data/pairs/` (e.g., standard Tuebingen `.txt` benchmarks).
+* **3-variable & 4-variable systems** pull from `data/synthetic/` (e.g., `.csv` data representing Chains, Forks, and Colliders).
 
 ### Basic Usage
-To analyze the default data pair:
+To analyze complex multi-variable systems, use the --nodes flag:
 ```bash
-python main.py
+# Run the default 3-variable dataset (e.g., collider_data.csv)
+python main.py --nodes 3
+
+# Run a specific 3-variable test 
+python main.py --nodes 3 --pair fork_data.csv
 ```
+
+### Output & Visualization
+The resulting adjacency matrix and causal statistics are printed to the console. The generated network graph will pop up in an interactive display window and be **automatically saved** to the `results/` directory using the source file's name dynamically (e.g., `results/fork_data.png`).
+
+**Example Output:**
+![Causal Graph of a Fork Structure](docs/collider_data.png)
 
 ### Command-Line Arguments
 The following flags allow you to customize the analysis based on the parameters defined in `main.py`:
 
 | Argument | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `--pair` | `str` | `pair0001.txt` | The name of the file in `data/pairs/` to analyze. |
-| `--alpha` | `float` | `0.05` | Significance level for independence tests. |
-| `--output` | `str` | `output_graph.png` | Filename to save the resulting graph. |
-| `--test` | `str` | `pearsonr` | Statistical test to use (options: `pearsonr`, `fisher-z`, `chi_square`). |
-
+| `--nodes` | `int` | `2` | Number of variables in the dataset (2, 3, or 4). Drives the smart default folder selection. |
+| `--pair` | `str` | `None` | The name of the file to analyze (e.g., `pair0001.txt` or `collider_data.csv`). If left blank, a smart default dataset is automatically chosen based on the node count. |
+| `--alpha` | `float` | `0.05` | Significance level for independence tests within the PC Algorithm and ANM logic. |
 
 ## 5. License
 

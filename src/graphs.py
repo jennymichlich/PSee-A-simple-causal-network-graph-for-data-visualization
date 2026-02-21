@@ -18,6 +18,7 @@ def draw_causal_graph(graph, title="Causal Graph", node_color='lightblue', save_
         return
 
     fig, ax = plt.subplots(figsize=(8, 6))
+    fig.canvas.manager.set_window_title(title)  # This sets the text in the actual window border/taskbar
     ax.set_title(title)
 
     pos = nx.circular_layout(graph)

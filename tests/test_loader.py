@@ -1,12 +1,14 @@
 import os
 import sys
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.insert(0, parent_dir)
 import pandas as pd
 import glob
 import unittest
-from src.loaders import load_tuebingen_pair
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir)
+
+from src.loaders import load_tuebingen_pair, load_causal_data
 
 
 class TestTuebingenLoader(unittest.TestCase):
@@ -24,7 +26,7 @@ class TestTuebingenLoader(unittest.TestCase):
         # Access data file shape
         rows, cols = df.shape
         # Assert that number of columns (from shape) is 2 otherwise emmit error message
-        self.assertEqual(cols,2,  f"Expected 2 columns, got {cols}")
+        self.assertEqual(cols, 2, f"Expected 2 columns, got {cols}")
         # Assert that number of rows (from shape) is greater than 0 otherwise emit error
         self.assertGreater(rows,0, f"Expected 0 rows, got {rows}")
         return
@@ -119,6 +121,44 @@ class TestTuebingenLoader(unittest.TestCase):
             print(f"{'!' * 58}\n")
 
         self.assertEqual(len(failed_files), 0, f"Failed to load {len(failed_files)} files out of {len(data_files)}.")
+
+
+class TestRobustCausalLoader(unittest.TestCase):
+    """
+    Tests for the new extension-agnostic loader for n-variable systems and synthetic data.
+    """
+
+    def setUp(self):
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.pairs_folder = os.path.join(project_root, 'data', 'pairs')
+        self.synthetic_folder = os.path.join(project_root, 'data', 'synthetic', '3-variables')
+
+    def test_column_standardization(self):
+        # Testing that TXT inputs result in standardized A, B labels
+        filename = 'pair0001.txt'
+        df = load_causal_data(self.pairs_folder, filename)
+        self.assertEqual(list(df.columns), ['A', 'B'])
+
+    def test_synthetic_csv_loading(self):
+        # Specifically testing the 3-variable collider data
+        filename = 'collider_data.csv'
+        full_path = os.path.join(self.synthetic_folder, filename)
+
+        if not os.path.exists(full_path):
+            self.skipTest(f"Synthetic file {filename} not found.")
+
+        df = load_causal_data(self.synthetic_folder, filename)
+        self.assertEqual(df.shape[1], 3)
+        self.assertEqual(list(df.columns), ['A', 'B', 'C'])
+
+    def test_header_detection_heuristic(self):
+        # Verify that CSVs with headers are handled as easily as TXTs without them
+        filename = 'collider_data.csv'
+        full_path = os.path.join(self.synthetic_folder, filename)
+
+        if os.path.exists(full_path):
+            df = load_causal_data(self.synthetic_folder, filename)
+            self.assertTrue(pd.api.types.is_float_dtype(df['A']))
 
 
 if __name__ == '__main__':

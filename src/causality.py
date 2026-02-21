@@ -1,6 +1,7 @@
 import networkx as nx
 import numpy as np
 import pandas as pd
+from pgmpy.estimators import PC
 from causallearn.search.FCMBased.ANM.ANM import ANM
 import warnings
 # from sklearn.exceptions import ConvergenceWarning
@@ -11,7 +12,6 @@ import warnings
 # OPTION A: The Library Way (pgmpy)
 # ==========================================
 
-from pgmpy.estimators import PC
 
 def run_pc_algo_library(data, alpha=0.05, test_name='pearsonr'):
     """
@@ -41,47 +41,41 @@ def run_pc_algo_library(data, alpha=0.05, test_name='pearsonr'):
 
 def get_adjacency_matrix(dag):
     """
-    Converts a pgmpy / networkx DAG into a clean 2x2 adjacency matrix.
-    Ensures a valid DataFrame is returned even if dag is None (testing revealed this error).
+    Returns the adjacency matrix of the DAG as a pandas DataFrame.
+    Dynamically scales to n-variable networks and sorts the nodes alphabetically.
     """
-    # Create the default template
-    matrix = pd.DataFrame(0, index=['A', 'B'], columns=['A', 'B'])
-    
-    # If dag is None or empty, we just return the zeros
-    if dag is None:
-        return matrix
-        
-    # Check for edges (if the nodes exist in the graph)
-    if 'A' in dag.nodes and 'B' in dag.nodes:
-        if dag.has_edge('A', 'B'):
-            matrix.loc['A', 'B'] = 1
-        if dag.has_edge('B', 'A'):
-            matrix.loc['B', 'A'] = 1
-            
-    return matrix
+
+    # Intent: Extracting and sorting the nodes ensures that the matrix always prints
+    # in a predictable order (A, B, C...) regardless of how many variables are in the dataset.
+    nodes = sorted(dag.nodes())
+
+    # Generate the adjacency matrix using the dynamic node list
+    adj_matrix = nx.to_pandas_adjacency(dag, nodelist=nodes, dtype=int, weight=None)
+
+    return adj_matrix
 
 
 def check_causal_direction_anm(df, alpha=0.05):
     """
-    Determines the causal direction between two variables (A, B) using
-    Additive Noise Models (ANM).
+    Determines the causal direction between a pair of variables using Additive Noise Models (ANM).
     """
-    
-    data_a = df['A'].to_numpy().reshape(-1, 1)
-    data_b = df['B'].to_numpy().reshape(-1, 1)
+
+    cols = df.columns
+    data_x = df[cols[0]].to_numpy().reshape(-1, 1)
+    data_y = df[cols[1]].to_numpy().reshape(-1, 1)
 
     anm = ANM()
 
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore") 
-        p_forward, p_backward = anm.cause_or_effect(data_a, data_b)
+        warnings.simplefilter("ignore")
+        p_forward, p_backward = anm.cause_or_effect(data_x, data_y)
 
     direction = "Inconclusive"
-    
+
     if p_forward > alpha and p_backward < alpha:
-        direction = "A --> B"    
+        direction = "A --> B"
     elif p_backward > alpha and p_forward < alpha:
-        direction = "B --> A"     
+        direction = "B --> A"
     elif p_forward > p_backward:
         direction = "A --> B (Weak)"
     elif p_backward > p_forward:
@@ -104,6 +98,7 @@ def check_independence(data, var_a, var_b):
     # TODO: Run Fisher's Z-test (or a simple T-test for now)
     # TODO: Return True if the p-value is high (independent), False if low (related)
     return None
+
 
 def orient_edges(skeleton):
     """

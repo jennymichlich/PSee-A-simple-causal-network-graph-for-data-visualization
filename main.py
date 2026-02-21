@@ -1,107 +1,87 @@
 import argparse
 import os
-import matplotlib.pyplot as plt
-from src.loaders import load_tuebingen_pair
+from src.loaders import load_causal_data
 from src.causality import run_pc_algo_library, get_adjacency_matrix, check_causal_direction_anm
-from src.graphs import draw_causal_graph, save_graph_to_file
-import networkx as nx
+from src.graphs import draw_causal_graph
 
 
 def main():
+    parser = argparse.ArgumentParser(description="PSee: Hybrid Causal Discovery Pipeline")
 
-    print("In main.")
-    parser = argparse.ArgumentParser(description="Run PC Algorithm on Tuebingen Data")
-    parser.add_argument('--pair', type=str, default='pair0001.txt', 
-                        help="The name of the file to analyze (e.g., pair0001.txt)")
-    parser.add_argument('--alpha', type=float, default=0.05, 
+    parser.add_argument('--nodes', type=int, default=2, choices=[2, 3, 4],
+                        help="Number of variables in the dataset")
+    parser.add_argument('--pair', type=str, default=None,
+                        help="Filename (e.g., pair0001.txt or fork_data.csv)")
+    parser.add_argument('--alpha', type=float, default=0.05,
                         help="Significance level for independence tests")
-    parser.add_argument('--output', type=str, default=os.path.join('results', 'output_graph.png'),
-                        help="Filename to save the resulting graph")
-    parser.add_argument('--test', type=str, default='pearsonr', 
-                        help="Statistical test: pearsonr, fisher-z, or chi_square")
 
     args = parser.parse_args()
 
-    # Use os.path.join for Windows/Linux compatibility
-    data_folder = os.path.join('data', 'pairs')
-    
-    print(f"--- Starting Analysis for {args.pair} ---")
+    # ---- Smart Defaults Configuration ----
+    # INTENT: This dictionary was created to make the use of this program form the command line
+    # easier for the user by using 'smart' default source file names.
+    defaults = {
+        2: (os.path.join('data', 'pairs'), 'pair0001.txt'),
+        3: (os.path.join('data', 'synthetic', '3-variables'), 'collider_data.csv'),
+        4: (os.path.join('data', 'synthetic', '4-variables'), 'synthetic_4_var.csv')
+    }
 
-    print("Loading data...")
-    df = load_tuebingen_pair(data_folder, args.pair)
-    
-    if df is None:
-        print("Stopping: Could not load data.")
-        return
+    if args.pair is None:
+        data_folder, target_file = defaults[args.nodes]
     else:
-        print("df :")
-        print(df.head())
+        data_folder = defaults[args.nodes][0]
+        target_file = args.pair
 
-        direction, p_forward, p_backward = check_causal_direction_anm(df=df, alpha=0.05)
-        print("direction :", direction)
-        print("p_forward :", p_forward)
-        print("p_backward :", p_backward)
+    # ---- Data Loading Phase ----
+    print(f"\n--- Loading: {target_file} ---")
+    df = load_causal_data(data_folder, target_file)
 
-        print("\nCorrelation Matrix:")
-        print(df.corr()) 
-        print("-------------------\n")
+    if df is None:
+        return
 
-        dag = run_pc_algo_library(data=df, alpha=args.alpha)
+    # ---- Phase 1: Structure Discovery (PC Algorithm) ----
+    print(f"Running PC Algorithm on {len(df.columns)} variables...")
+    dag = run_pc_algo_library(data=df, alpha=args.alpha)
 
-        matrix = get_adjacency_matrix(dag=dag)
-        print("matrix :")
-        print(matrix)
+    # ---- Phase 2: Direction Refinement (Hybrid ANM) ----
+    # NOTE: Initial testing revealed that while the PC algorithm
+    # successfully identified 'Collider' structures, it failed to correctly
+    # orient 'Fork' structures (B <- A -> C).
+    #
+    # INTENT: This hybrid refinement phase was implemented specifically to
+    # resolve these mis-identifications. By applying Additive Noise Modeling (ANM)
+    # to every edge found by the PC algorithm, we hope to break the statistical ties
+    # between Forks and Chains.
 
-        num_nodes = dag.number_of_nodes()
-        print(f"Number of nodes: {num_nodes}")
-        num_edges = dag.number_of_edges()
-        print(f"Number of edges: {num_edges}")
-        print(dag.edges(data=True))
+    print("Refining edge orientations using Additive Noise Models...")
+    current_edges = list(dag.edges())
 
-        if dag is not None:
+    for u, v in current_edges:
+        pair_df = df[[u, v]]
 
-            # Explicitly incorporate Additive Noise Models information about relationship direction.
-            if direction == "A --> B":
-                if dag.has_edge('B', 'A'): dag.remove_edge('B', 'A')
-                dag.add_edge('A', 'B')
-            elif direction == "B --> A":
-                if dag.has_edge('A', 'B'): dag.remove_edge('A', 'B')
-                dag.add_edge('B', 'A')
+        # ANM check
+        direction, _, _ = check_causal_direction_anm(df=pair_df, alpha=0.05)
 
-            print("\nGenerating Visualization...")
-
-            draw_causal_graph(dag, 
-                              title=f"Causal Analysis: {args.pair}", 
-                              save_path=args.output)
-
-            #-----------------------------------------------------------------------    
-            # undirected_graph = dag.to_undirected()
-
-            # print("\nPlotting graph...")
-            
-            # pos = nx.circular_layout(dag)
-            
-            # print(f"Node Positions: {pos}")
-            
-            # plt.figure(figsize=(8, 6)) 
-            # plt.title(f"Causal Graph for {args.pair} (alpha={args.alpha})")
-            # nx.draw(undirected_graph, pos, 
-            #         with_labels=True, 
-            #         node_color='lightblue', 
-            #         node_size=2000,    
-            #         # arrowsize=20, 
-            #         font_size=12, 
-            #         font_weight='bold',
-            #         connectionstyle='arc3, rad=0.1') 
-            
-            # # plt.savefig(args.output)
-            # # print(f"Graph saved to {args.output}")
-            
-            # plt.show()
-            #-----------------------------------------------------------------------    
+        # If ANM evidence suggests the reverse of the PC orientation, we flip it.
+        # This correction is what allows the 'Fork' data to be correctly visualized.
+        if direction == "B --> A":  # 'B' represents the second node in the pair (v)
+            print(f"  [ANM Correction] Reversing edge {u}->{v} to {v}->{u}")
+            dag.remove_edge(u, v)
+            dag.add_edge(v, u)
         else:
-            print("No graph returned (PC Algorithm failed).")
+            print(f"  [ANM Confirmed] Direction: {u}->{v}")
 
+    # ---- Visualization and Export ----
+    base_name = os.path.splitext(target_file)[0]
+    output_path = os.path.join('results', f"{base_name}.png")
+    display_title = f"Causal Analysis: {base_name}"
+
+    print(f"\nFinal Graph: {dag.number_of_nodes()} nodes, {dag.number_of_edges()} edges.")
+    print(f"Adjacency Matrix:\n{get_adjacency_matrix(dag=dag)}")
+
+    draw_causal_graph(dag,
+                      title=display_title,
+                      save_path=output_path)
 
 
 if __name__ == "__main__":

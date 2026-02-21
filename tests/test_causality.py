@@ -9,7 +9,6 @@ import numpy as np
 import networkx as nx
 from contextlib import redirect_stdout, redirect_stderr
 from src.loaders import load_tuebingen_pair, get_all_ground_truths
-# from src.causality import run_pc_algo_library as run_pc_algorithm
 from src.causality import run_pc_algo_library, get_adjacency_matrix, check_causal_direction_anm
 import warnings
 from sklearn.exceptions import ConvergenceWarning
@@ -48,15 +47,36 @@ class TestCausalityStructure(unittest.TestCase):
         matrix = get_adjacency_matrix(dag)
         self.assertEqual(matrix.sum().sum(), 0)
 
-    def test_matrix_none_input(self):
-        matrix = get_adjacency_matrix(None)
-        self.assertEqual(matrix.shape, (2, 2))
-
     def test_matrix_reverse_edge(self):
         dag = nx.DiGraph()
-        dag.add_edge('B', 'A') 
+        dag.add_edge('B', 'A')
         matrix = get_adjacency_matrix(dag)
         self.assertEqual(matrix.loc['B', 'A'], 1)
+
+    def test_matrix_3_variables_and_sorting(self):
+        # Tests that the matrix dynamically scales to N variables and sorts nodes alphabetically
+        dag = nx.DiGraph()
+        # Add nodes out of order
+        dag.add_nodes_from(['C', 'A', 'B'])
+        dag.add_edge('A', 'C')
+
+        matrix = get_adjacency_matrix(dag)
+
+        # Verify 3x3 dimension
+        self.assertEqual(matrix.shape, (3, 3))
+        # Verify alphabetical sorting
+        self.assertListEqual(list(matrix.columns), ['A', 'B', 'C'])
+        self.assertListEqual(list(matrix.index), ['A', 'B', 'C'])
+        # Verify edge
+        self.assertEqual(matrix.loc['A', 'C'], 1)
+        self.assertEqual(matrix.loc['C', 'A'], 0)
+
+    def test_matrix_unweighted_edge_fix(self):
+        # Tests the specific fix for the TypeError when networkx encounters unweighted edges
+        dag = nx.DiGraph()
+        dag.add_edge('X', 'Y')
+        matrix = get_adjacency_matrix(dag)
+        self.assertEqual(matrix.loc['X', 'Y'], 1)
 
 
 # class TestCausalBenchmark(unittest.TestCase):
@@ -102,3 +122,4 @@ class TestCausalityStructure(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
