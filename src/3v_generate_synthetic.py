@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
 
 ## The three main structures used in this dataset are forks, colliders, and chains.
+## "X = n * Z + + np.random.randn(self.n) * n" Represents a guassian function.
+## For non-gaussian functions use "X = n * Z + + np.random.randn(min (range), max (range), self.n)" 
 
 class CausalModel:
     def __init__(self, n_samples=1000):
