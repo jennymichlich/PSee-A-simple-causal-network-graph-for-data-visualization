@@ -5,6 +5,8 @@ from scipy.stats import pearsonr
 from sklearn.linear_model import LinearRegression
 
 ## These causal models represent an introduction to a hierarchical system, as multiple causal variables interact in more complex ways. 
+## "X = n * Z + + np.random.randn(self.n) * n" represents a guassian function.
+## For non-gaussian functions use "X = n * Z + + np.random.randn(min (range), max (range), self.n)" 
 
 class CausalModel:
     def __init__(self, n_samples=1000):
