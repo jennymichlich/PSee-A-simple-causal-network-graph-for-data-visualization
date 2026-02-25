@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: "PSee: A simple causal network graph for data visualization"
+version: 1.0.0
+license: "MIT"
+type: software
+abstract: "This is a Python package used to create an N-variable causal network graph with data visualization."
+message: "If you use this software, please cite it as below."
+authors:
+  - given-names: Carlo
+    family-names: Tak
+    affiliation: Arizona State University
+  - given-names: Jenny
+    family-names: Michlich
+    affiliation: Arizona State University
+    orcid: "https://orcid.org/0000-0002-4053-669X"
+keywords:
+  - causal discovery
+  - network graphs
+  - complex systems
