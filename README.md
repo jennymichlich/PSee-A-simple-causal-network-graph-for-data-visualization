@@ -9,10 +9,6 @@ Murmurings of the replication crisis have been ongoing since the early years of 
 
 Correlations are often undirected and unstable, leading to findings that fail to replicate when context changes. We propose that by moving from correlative studies to studies of **modeled causation**, researchers can identify more robust, reproducible mechanisms. To support this, we have developed **PSee**, a Python-based tool utilizing the PC algorithm (Spirtes et al., 2000). Our implementation aims to help researchers quickly investigate causal and multilevel network graphs that propose mechanisms for complex systems. Currently, PSee models two-variable, three-variable, and four-variable systems, producing publication-ready network graphs that host two levels of organization within the modeled system as proposed by Gebharter (2017).
 
-### If you use this software, please cite:
-Tak, C. & Michlich, J.M. (2025). PSee: A simple causal network graph for data visualization [Computer software]. GitHub. [https://github.com/jennymichlich/PSee-A-simple-causal-network-graph-for-data-visualization.]
-
-
 ## 3. Installation
 
 To set up the PSee project environment, we recommend using **Conda**. This ensures all specialized causal inference libraries, such as `pgmpy` and `causal-learn`, are installed correctly.
