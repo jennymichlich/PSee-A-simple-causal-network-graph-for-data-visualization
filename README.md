@@ -99,4 +99,5 @@ We welcome contributions from researchers and developers who share our goal of p
 3. Peterson, D., & Panofsky, A. (2023). Metascience as a scientific social movement. Minerva, 61(2), 147-174.
 4. Causation, Prediction, and Search P. Spirtes, C. Glymour, and R. Scheines (2nd edition, MIT Press, 2000)
 5. Gebharter, A. Uncovering constitutive relevance relations in mechanisms. Philos Stud 174, 2645–2666 (2017). https://doi.org/10.1007/s11098-016-0803-3
+6. Pearl, J. (2009). Causality: models, reasoning, and inference. Cambridge University Press.
 
