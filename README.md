@@ -93,6 +93,8 @@ We welcome contributions from researchers and developers who share our goal of p
 4. **Note on Documentation**: Per our project requirements, please ensure you include **in-code comments** that clearly explain the reasoning and functionality of any new code additions.
 5. **Push** your branch to GitHub and open a **Pull Request** for review.
 
+### If you use this software, please cite:
+Tak, C. & Michlich, J.M. (2025). PSee: A simple causal network graph for data visualization [Computer software]. GitHub. [https://github.com/jennymichlich/PSee-A-simple-causal-network-graph-for-data-visualization.]
 
 
 ## 7. References
