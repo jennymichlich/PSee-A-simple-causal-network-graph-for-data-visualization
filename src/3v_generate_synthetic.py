@@ -16,10 +16,11 @@ class CausalModel:
     
     def generate_fork(self):
         """Fork structure: X <- Z -> Y"""
-        Z = np.random.randn(self.n)
-        X = 2 * Z + np.random.randn(self.n) * 0.5
-        Y = -1.5 * Z + np.random.randn(self.n) * 0.5
+        Z = np.random.uniform(-2, 2, self.n) 
+        X = 2 * Z + np.random.uniform(-0.5, 0.5, self.n)
+        Y = -1.5 * Z + np.random.uniform(-0.5, 0.5, self.n)
         return {'X': X, 'Y': Y, 'Z': Z}
+    
 
     ## In the collider structure, the initial causal agents X and Y move to influence Z, where
     ## noise is added to correlate X and Y. This is also demonstrated in the final plots.
@@ -30,6 +31,7 @@ class CausalModel:
         Y = np.random.randn(self.n)
         Z = 1.5 * X + 2 * Y + np.random.randn(self.n) * 0.5
         return {'X': X, 'Y': Y, 'Z': Z}
+    
 
     ## In the chain structure, the initial causal agent X influences Z and Y in a chain, where
     ## noise is added to correlate Z and Y. This is also demonstrated in the final plots.
