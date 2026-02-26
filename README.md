@@ -3,6 +3,14 @@
 Jenny M. Michlich 
 & Carlo Tak
 
+## Table of Contents
+* [1. Team](#1-team)
+* [2. Project Description](#2-project-description)
+* [3. Installation & Setup](#3-installation)
+* [4. User Documentation & Features](#4-user-documentation)
+* [5. License](#5-license)
+* [6. Contributing](#6-contributing--bug-reports)
+* [7. References](#7-references)
 
 ## 2. Project Description:
 Murmurings of the replication crisis have been ongoing since the early years of my first undergraduate experience, but this conversation has moved from university hallways to public discourse in academic literature. Science, broadly, has been called out regarding the lack of reproducibility of major findings from prominent scholars and smaller labs alike (Shrout & Rodgers, 2018). While effective coding protocols (Azevedo et al., 2025) and the emerging field of Metascience (Peterson & Panofsky, 2023) offer pathways forward, we believe a significant driver of this crisis is the scientific community's over-reliance on correlative data. 
