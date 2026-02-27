@@ -1,4 +1,5 @@
 # PSee-A-simple-causal-network-graph-for-data-visualization
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18793744.svg)](https://doi.org/10.5281/zenodo.18793744)
 
 ## Table of Contents
 * [1. Team](#1-team)
